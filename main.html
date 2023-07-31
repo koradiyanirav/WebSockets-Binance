@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  </head>
+  <style>
+    table,
+    td,
+    th {
+      text-align: left;
+      border: 1px solid black;
+    }
+    table {
+      width: 30%;
+      height: 200px;
+      overflow: hidden;
+    }
+    .red {
+      color: red;
+    }
+    .green {
+      color: green;
+    }
+  </style>
+  <body>
+    <div>
+      <div class="flex items-center">
+        <div>
+          <img width="50" src="assets/bitcoin.png" alt="" />
+        </div>
+        <div>
+          <h3 id="displayRedAndGreenData"></h3>
+        </div>
+      </div>
+      <div class="m-2">
+        <form name="form" class="float-right">
+          <input
+            name="data"
+            class="border"
+            type="text"
+            placeholder="Enter Amount"
+          />
+          <div id="dataInput"></div>
+          <button onchange="inputGet()">Submit</button>
+        </form>
+        <table id="myTable" class="h-[100px] truncate">
+          <tr>
+            <th>Price(USDT)</th>
+            <th>Amount(BTC)</th>
+            <th>Time</th>
+          </tr>
+          <tr>
+            <td id="price"></td>
+            <td id="amount"></td>
+            <td id="time"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script>
+    var search;
+    let websocket = new WebSocket(
+      "wss://stream.binance.com:9443/ws/btcusdt@trade"
+    );
+    var yash = document.getElementById("displayRedAndGreenData");
+    var current_price = 0;
+    var treds = [];
+    var amountabov = 1000;
+
+    websocket.onmessage = function (event) {
+      var newok = JSON.parse(event.data);
+      console.log(newok);
+      glocbe = newok.m;
+
+      var dataLoad = parseFloat(newok.p).toFixed(2);
+      var doller = "$";
+      document.getElementById("displayRedAndGreenData").innerHTML =
+        doller + dataLoad;
+
+      if (dataLoad < current_price) {
+        document.getElementById("displayRedAndGreenData").style.color = "red";
+      } else if (dataLoad > current_price) {
+        document.getElementById("displayRedAndGreenData").style.color = "green";
+      }
+      var qty = Math.round(current_price * newok.q);
+
+      current_price = dataLoad;
+
+      var yashpopu;
+      if (qty > amountabov) {
+        current_price = "$" + "" + current_price;
+        if (search) {
+          yashpopu = treds;
+        } else {
+          yashpopu = search;
+        }
+        treds.unshift([current_price, qty, newok.T, newok.m]);
+        if (treds.length >= yashpopu) {
+          treds = treds.slice(0, 50);
+        }
+        var price = "";
+        var amount = "";
+        var time = "";
+        // if (glocbe == false) {
+        //   document.getElementById("price").style.color = "red";
+        // } else {
+        //   document.getElementById("price").style.color = "green";
+        // }
+        for (var i = 0; i < treds.length; i++) {
+          // i<= treds.length mukavuuuu
+          if (treds[i][0] < current_price) {
+            price += `
+              <div class='red'>${treds[i][0]} &darr;</div>`;
+          } else {
+            price += `
+              <div class='green'>${treds[i][0]} &uarr;</div>`;
+          }
+          amount += `
+            <div>${treds[i][1]}</div>`;
+          time += `
+            <div>${moment(treds[i][2]).startOf("seconds").fromNow()}</div>`;
+        }
+        $("#price").html(price);
+        $("#amount").html(amount);
+        $("#time").html(time);
+      }
+    };
+    function inputGet() {
+      var inputData = document.form.data.value;
+      search = inputData;
+    }
+  </script>
+</html>

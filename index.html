@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css" />
+    <!-- href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" -->
+  </head>
+  <style>
+    .bitc {
+      font-size: 25px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+    }
+
+    .bitcprice {
+      height: 50px;
+      width: 50px;
+      padding-right: 10px;
+    }
+
+    .tredingdata {
+      padding: 20px;
+      width: 20%;
+      display: flex;
+      font-weight: 600;
+      gap: 5px;
+      font-size: medium;
+    }
+
+    .bitcdoller {
+      color: black !important;
+    }
+
+    .tableRow {
+      border: 1px solid black;
+    }
+  </style>
+  <body>
+    <div>
+      <h1>Traders</h1>
+      <div class="bitc">
+        <img
+          src="assets/bitcoin.png"
+          alt="BitCoinLogo"
+          class="bitcprice"
+        />BitCoin Price
+      </div>
+      <div id="treding" class="tredingdata"></div>
+      <table id="example" class="display" width="100%"></table>
+      <!-- <table>
+        <tr>
+          <th>Price</th>
+          <th>Amount</th>
+          <th>Time</th>
+        </tr>
+        <tr id="bitcTable" class="tableRow"></tr>
+      </table> -->
+    </div>
+  </body>
+  <script src="https://momentjs.com/downloads/moment.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script>
+    var exampleSocket = new WebSocket(
+      "wss://stream.binance.com:9443/ws/btcusdt@trade"
+    );
+
+    var tradeDiv = document.getElementById("treding");
+
+    var currentPrice = 0;
+
+    var traders = [];
+
+    var amountAbove = 10000;
+
+    var dt = new DataTable("#example", {
+      columns: [
+        { title: "Price(USDT)" },
+        { title: "Amount(BTC)" },
+        { title: "Time" },
+      ],
+    });
+
+    function rendertable() {
+      var table = $("#example").DataTable();
+      // if (traders > currentPrice) {
+      table.clear();
+      table.rows.add(traders).draw();
+      // console.log(traders);
+      // } else {
+      // }
+    }
+    //   const tableRow = document.getElementById("bitcTable");
+
+    //   var tableBody = tableRow.getElementsByTagName("td");
+    // }
+    // for (let i = 0; i < traders.length && i < tableBody.length; ++i) {
+    //   // let tableRow = document.createTextNode(traders[i]);
+    //   var newRow = tbodyRef.insertRow();
+    //   const headRow = document.createElement("tr");
+    //   document.createElement("td");
+    //   headRow.appendChild(headCell);
+
+    //   tableBody[i].textContent = traders[i];
+    // }
+    exampleSocket.onmessage = function (event) {
+      var oriPrice = JSON.parse(event.data);
+      // console.log(event.data);
+
+      newrPrice = parseFloat(oriPrice.p).toFixed(2);
+
+      tradeDiv.innerHTML = `<div class='bitcdoller'>$</div>${newrPrice}`;
+
+      if (newrPrice > currentPrice) {
+        document.getElementById("treding").style.color = "red";
+      } else if (newrPrice < currentPrice) {
+        document.getElementById("treding").style.color = "green";
+      }
+
+      currentPrice = newrPrice;
+
+      var colors = oriPrice.m;
+
+      var qty = Math.round(oriPrice.q * oriPrice.p);
+      // console.log(qty);
+
+      var time = moment(oriPrice.T);
+
+      var d = moment.duration(time, "milliseconds");
+
+      var hours = Math.floor(d.asHours());
+
+      var mins = Math.floor(d.asMinutes()) - hours * 60 + " Minutes Ago";
+
+      if (qty > amountAbove) {
+        traders.unshift([currentPrice, qty, mins]);
+
+        if (traders.length > 50) {
+          traders = traders.slice(0, 50);
+          // if (colors === false) {
+          //   document.getElementsByClassName("sorting_1").style.color = "red";
+          // } else {
+          //   document.getElementsByClassName("sorting_1").style.color = "green";
+          // }
+        }
+        rendertable();
+        console.log(traders);
+      }
+    };
+  </script>
+</html>
