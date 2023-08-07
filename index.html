@@ -3,59 +3,68 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title id="treding2"></title>
     <link
       rel="stylesheet"
       href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css"
     />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      th,
+      td {
+        border: 1px solid black;
+        padding: 8px;
+      }
+    </style>
   </head>
-  <style>
-    .bitc {
-      font-size: 25px;
-      font-weight: 800;
-      display: flex;
-    }
-
-    .bitcprice {
-      height: 25px;
-      width: 25px;
-      padding-right: 10px;
-    }
-
-    .tredingdata {
-      padding: 20px;
-      width: 20%;
-      display: flex;
-      font-weight: 600;
-      gap: 5px;
-      font-size: medium;
-    }
-
-    .bitcdoller {
-      color: black !important;
-    }
-
-    .tableRow {
-      border: 1px solid black;
-    }
-  </style>
   <body>
-    <div>
-      <h1>Traders</h1>
-      <div class="bitc">
-        <img src="assets/btc.png" alt="BitCoinLogo" class="bitcprice" />BitCoin
-        Price (BTC)
+    <div class="m-3">
+      <div class="border border-black w-1/4 mb-2 p-2">
+        <h1 class="text-[32px] font-extrabold my-[21.44px]">Traders</h1>
+        <div class="text-[25px] font-extrabold flex gap-1 items-center">
+          <img
+            src="assets/btc.png"
+            alt="BitCoinLogo"
+            class="h-[25px] w-[25px]"
+          />BitCoin Price
+          <span class="text-gray-500 font-normal text-[20px]">(BTC)</span>
+        </div>
+        <div
+          id="treding"
+          class="p-5 w-1/5 flex font-semibold gap-[5px] text-[16px]"
+        ></div>
       </div>
-      <div id="treding" class="tredingdata"></div>
-      <table id="example" class="display" width="100%"></table>
-      <!-- <table>
-        <tr>
-          <th>Price</th>
-          <th>Amount</th>
-          <th>Time</th>
-        </tr>
-        <tr id="bitcTable" class="tableRow"></tr>
-      </table> -->
+      <div class="mb-2 p-2 flex gap-2">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Enter your search term"
+          class="outline-none border border-gray-500 p-1 rounded"
+        />
+        <button onclick="searchFun()" class="bg-rose-600 p-2 rounded-full">
+          Search
+        </button>
+      </div>
+      <div class="h-full">
+        <table id="myTable">
+          <thead>
+            <tr>
+              <th class="">Price (USDT)</th>
+              <th class="">Amount (BTC)</th>
+              <th class="">Time</th>
+            </tr>
+            <!-- <tr id="bitcTable">
+              <td id="price" class="border border-black p-2"></td>
+              <td id="amount" class="border border-black p-2"></td>
+              <td id="time" class="border border-black p-2"></td>
+            </tr> -->
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <form>
+        <input type="text" />
+      </form>
     </div>
   </body>
   <script src="https://momentjs.com/downloads/moment.js"></script>
@@ -68,54 +77,27 @@
 
     var tradeDiv = document.getElementById("treding");
 
+    var tradeTitle = document.getElementById("treding2");
+
     var currentPrice = 0;
+    var traders = [[]];
+    var amountAbove = 0;
+    const tableBody = document.getElementById("tableBody");
+    const maxRows = 50;
 
-    var traders = [];
-
-    var amountAbove = 10000;
-
-    var dt = new DataTable("#example", {
-      columns: [
-        { title: "Price(USDT)" },
-        { title: "Amount(BTC)" },
-        { title: "Time" },
-      ],
-    });
-
-    function rendertable() {
-      var table = $("#example").DataTable();
-      // if (traders > currentPrice) {
-      table.clear();
-      table.rows.add(traders).draw();
-      // console.log(traders);
-      // } else {
-      // }
-    }
-    //   const tableRow = document.getElementById("bitcTable");
-
-    //   var tableBody = tableRow.getElementsByTagName("td");
-    // }
-    // for (let i = 0; i < traders.length && i < tableBody.length; ++i) {
-    //   // let tableRow = document.createTextNode(traders[i]);
-    //   var newRow = tbodyRef.insertRow();
-    //   const headRow = document.createElement("tr");
-    //   document.createElement("td");
-    //   headRow.appendChild(headCell);
-
-    //   tableBody[i].textContent = traders[i];
-    // }
     exampleSocket.onmessage = function (event) {
       var oriPrice = JSON.parse(event.data);
       // console.log(event.data);
-
       newrPrice = parseFloat(oriPrice.p).toFixed(2);
 
-      tradeDiv.innerHTML = `<div class='bitcdoller'>$</div>${newrPrice}`;
+      tradeDiv.innerHTML = `<div class='text-black'>$</div>${newrPrice}`;
+
+      tradeTitle.innerHTML = newrPrice;
 
       if (newrPrice > currentPrice) {
-        document.getElementById("treding").style.color = "red";
-      } else if (newrPrice < currentPrice) {
         document.getElementById("treding").style.color = "green";
+      } else if (newrPrice < currentPrice) {
+        document.getElementById("treding").style.color = "red";
       }
 
       currentPrice = newrPrice;
@@ -123,7 +105,6 @@
       var colors = oriPrice.m;
 
       var qty = Math.round(oriPrice.q * oriPrice.p);
-      // console.log(qty);
 
       var time = moment(oriPrice.T);
 
@@ -136,16 +117,44 @@
       if (qty > amountAbove) {
         traders.unshift([currentPrice, qty, mins]);
 
-        if (traders.length > 50) {
-          traders = traders.slice(0, 50);
-          // if (colors === false) {
-          //   document.getElementsByClassName("sorting_1").style.color = "red";
-          // } else {
-          //   document.getElementsByClassName("sorting_1").style.color = "green";
+        for (let i = 0; i < traders.length && i < 50; ++i) {
+          const row = document.createElement("tr");
+          // if (traders[i].length === 50) {
+          // const price = traders[i][0];
+          // console.log(price);
+          for (let j = 0; j < traders[i].length; ++j) {
+            const cell = document.createElement("td");
+            //   traders = traders[i].slice(0, 50);
+
+            cell.textContent = traders[i][j];
+            row.appendChild(cell);
+            // }
+          }
           // }
+          // tableBody.appendChild(row);
         }
-        rendertable();
-        console.log(traders);
+      }
+    };
+
+    const searchFun = () => {
+      var filter = document.getElementById("searchInput").value;
+
+      var myTable = document.getElementById("tableBody");
+
+      var tr = myTable.getElementsByTagName("tr");
+
+      console.log(tr);
+      for (let i = 0; i < tr.length; i++) {
+        let td = tr[i].getElementsByTagName("td")[1];
+
+        if (td) {
+          let textValue = td.textContent || td.innerHTML;
+          if (textValue.indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
       }
     };
   </script>

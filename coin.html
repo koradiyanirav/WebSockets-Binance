@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bitcoin Data Table</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 80%;
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+  <body>
+    <h1>Bitcoin Data Table</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Price</th>
+          <th>Amount</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <script>
+      const tableBody = document.getElementById("tableBody");
+
+      // Simulated array of data (replace with real data)
+      const dataArray = [
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        [10000, 0.05, "10:00 AM"],
+        [10500, 0.03, "11:30 AM"],
+        [9800, 0.08, "12:45 PM"],
+        // ... add more data entries here
+      ];
+
+      for (let i = 0; i < dataArray.length && i < 10; i++) {
+        const row = document.createElement("tr");
+
+        for (let j = 0; j < dataArray[i].length; j++) {
+          const cell = document.createElement("td");
+          cell.textContent = dataArray[i][j];
+          row.appendChild(cell);
+        }
+
+        tableBody.appendChild(row);
+      }
+    </script>
+  </body>
+</html>

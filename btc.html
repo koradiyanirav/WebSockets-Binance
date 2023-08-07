@@ -1,0 +1,215 @@
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>WebSocket Bitcoin Amount Search</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #addressInput {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    #result {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+  <body>
+    <h1>Bitcoin Amount Search</h1>
+    <input type="text" id="addressInput" placeholder="Enter Bitcoin Address" />
+    <div id="result"></div>
+
+    <script>
+      const socket = new WebSocket(
+        "wss://stream.binance.com:9443/ws/btcusdt@trade"
+      );
+
+      socket.onopen = () => {
+        console.log("WebSocket connection established");
+      };
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const amount = data.q;
+        if (data.q === "bitcoin_amount") {
+          document.getElementById(
+            "result"
+          ).textContent = `Bitcoin Amount: ${amount} BTC`;
+        }
+        // console.log(amount);
+        // console.log(data.q);
+      };
+
+      document
+        .getElementById("addressInput")
+        .addEventListener("keyup", (event) => {
+          if (event.key === "Enter") {
+            const address = event.target.value;
+            socket.send(JSON.stringify({ type: "search", address }));
+          }
+        });
+    </script>
+  </body>
+</html> -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebSocket Bitcoin Price & Amount Table</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px auto;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+    thead {
+      background-color: #f2f2f2;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+  </style>
+  <body>
+    <h1>Bitcoin Price & Amount Table</h1>
+
+    <div class="my-element">This is a div with class "my-element"</div>
+    <div class="my-element">This is another div with class "my-element"</div>
+
+    <table id="">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Price</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <script>
+      // JavaScript
+      function addIdToElementWithClass(className, newId) {
+        const elements = document.getElementsByClassName(className);
+
+        for (let i = 0; i < elements.length; i++) {
+          elements[i].id = newId;
+        }
+      }
+
+      // Usage: Adding ID "my-id" to all elements with class "my-element"
+      addIdToElementWithClass("my-element", "my-id");
+
+      const socket = new WebSocket(
+        "wss://stream.binance.com:9443/ws/btcusdt@trade"
+      );
+
+      socket.onopen = () => {
+        console.log("WebSocket connection established");
+      };
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        // if (data.type === "bitcoin_data") {
+        const { T, p, q } = data;
+        addToTable(T, p, q);
+
+        // console.log(T);
+        // }
+      };
+
+      var currentPrice = 0;
+      var amountAbove = 0;
+
+      function addToTable(T, p, q) {
+        // newrPrice = parseFloat(p).toFixed(2);
+
+        // var qty = Math.round(q * p);
+
+        // console.log(qty);
+
+        const tableBody = document.getElementById("tableBody");
+        const newRow = tableBody.insertRow(0);
+
+        // const timeCell = newRow.insertCell(0);
+        // const priceCell = newRow.insertCell(1);
+        // const amountCell = newRow.insertCell(2);
+
+        // timeCell.textContent = T;
+        // priceCell.textContent = p;
+        // amountCell.textContent = q;
+
+        // for (let i = 0; i < 50; i++) {
+        //   const T = new Date().toLocaleTimeString();
+
+        //   const p = Math.random(p) * 10000;
+        //   console.log(p);
+        //   const q = Math.random(q) * 0.1;
+
+        //   addToTable(p, q, T);
+        // }
+
+        // if (qty > amountAbove) {
+
+        // const timeCell = document.createElement("td");
+        // timeCell.textContent = T;
+        // newRow.appendChild(timeCell);
+
+        // const priceCell = document.createElement("td");
+        // priceCell.textContent = newrPrice;
+        // newRow.appendChild(priceCell);
+
+        // const amountCell = document.createElement("td");
+        // amountCell.textContent = q;
+        // newRow.appendChild(amountCell);
+
+        // tableBody.appendChild(newRow);
+        // }
+
+        // if (newrPrice > currentPrice) {
+        //   document.getElementsByTagName("td").style.color = "green";
+        // } else if (newrPrice < currentPrice) {
+        //   document.getElementsByTagName("td").style.color = "red";
+        // }
+
+        // currentPrice = newrPrice;
+      }
+
+      const searchFun = () => {
+        var filter = document.getElementById("searchInput").value;
+
+        var myTable = document.getElementById("tableBody");
+
+        var tr = myTable.getElementsByTagName("tr");
+        console.log(tr);
+      };
+    </script>
+  </body>
+</html>

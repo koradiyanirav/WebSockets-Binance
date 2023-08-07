@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  </head>
+  <style>
+    table,
+    td,
+    th {
+      text-align: left;
+    }
+    table {
+      width: 25%;
+      height: 200px;
+      overflow: hidden;
+    }
+    td {
+      margin-top: 10px;
+    }
+    th {
+      font-size: 12px;
+      color: #848e9c;
+    }
+    h2 {
+      color: #f0b90b;
+    }
+    .red {
+      color: red;
+    }
+    .green {
+      color: green;
+    }
+    body {
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      background-color: rgb(22, 26, 30);
+    }
+  </style>
+  <body>
+    <div class="flex justify-end items-center h-[auto]">
+      <div class="m-6 w-[520px] border-[0.5px] p-6">
+        <div class="flex items-center float-right">
+          <div>
+            <form name="form" class="float-right">
+              <input
+                name="data"
+                class="border text-[#848e9c] bg-[#2b3139] rounded-[4px]"
+                type="text"
+                onchange="inputGet()"
+                placeholder="Search Amount"
+              />
+              <div id="dataInput"></div>
+              <p id="print" class="text-[red]"></p>
+            </form>
+          </div>
+
+          <div class="">
+            <button
+              class="ml-2 bg-[#2b3139] text-[#848e9c] w-[50px] h-[30px] rounded-[4px] text-[12px]"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+        <span class="flex mb-[10px]">
+          <h2 class="mr-2 text-[14px]">Market Trades</h2>
+          <span class="text-[#848e9c] text-[14px]">My Trades</span>
+        </span>
+        <div>
+          <div class="flex my-3">
+            <div>
+              <select
+                name=""
+                class="float-left w-[50px] mr-2 bg-[rgb(22_26_30)] border text-[#fff] rounded"
+                id="select"
+              >
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+            <div class="text-[#FFF]">Shown Items</div>
+          </div>
+          <div class="w-full border-t border-[#848e9c] mb-2"></div>
+          <table id="myTable" class="h-[100px] truncate">
+            <tr>
+              <th class="">Price(USDT)</th>
+              <th>Amount(BTC)</th>
+              <th class="text-right ml-[10px]">Time</th>
+            </tr>
+            <tr>
+              <td id="price" class="text-[12px]"></td>
+              <td
+                id="amount"
+                class="text-[#848e9c] text-[12px] text-right"
+              ></td>
+              <td id="time" class="text-[#848e9c] text-[12px] text-right"></td>
+            </tr>
+            <tr>
+              <td
+                id="linklist"
+                class="text-[#848e9c] text-[12px] text-right"
+              ></td>
+              <td
+                class="text-[#848e9c] text-[12px] text-right"
+                id="amount2"
+              ></td>
+            </tr>
+          </table>
+          <div class="w-full border-t border-[#848e9c] my-2"></div>
+
+          <div class="flex">
+            <p class="text-[#fff]">Show Total</p>
+            &nbsp;
+            <p class="text-[#fff]" id="totalNOOF"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <h3 id="displayRedAndGreenData"></h3> -->
+  </body>
+  <script>
+    var search;
+    function inputGet() {
+      search = document.form.data.value;
+      document.getElementById("print").innerHTML = search;
+    }
+
+    let websocket = new WebSocket(
+      "wss://stream.binance.com:9443/ws/btcusdt@trade"
+    );
+    var current_price = 0;
+    var treds = [];
+    var amountabov = 0;
+
+    websocket.onmessage = function (event) {
+      var object = JSON.parse(event.data);
+      glocbe = object.m;
+
+      var dataLoad = parseFloat(object.p).toFixed(5);
+
+      var qty = object.q;
+
+      current_price = dataLoad;
+
+      var selectDataInselect = document.getElementById("select").value;
+      document.getElementById("totalNOOF").innerHTML = selectDataInselect;
+      if (qty >= amountabov) {
+        current_price = "$" + "" + current_price;
+        treds.unshift([current_price, qty, object.T, object.m]);
+        if (selectDataInselect == null || selectDataInselect == "") {
+          if (treds.length >= 10) {
+            treds = treds.slice(0, 9);
+          }
+        } else {
+          if (treds.length >= selectDataInselect) {
+            treds = treds.slice(0, selectDataInselect);
+          }
+        }
+        var price = "";
+        var price2 = "";
+        var amount = "";
+        var amount2 = "";
+        var time = "";
+        var newDataset;
+        var amount22 = [];
+        for (var i = 0; i < treds.length; i++) {
+          // i<= treds.length mukavuuuu
+          console.log(treds);
+          // if (treds[i][0] < newDataset) {
+          if (search == null || search == "") {
+            if (!treds[i][3] == false) {
+              price += `
+              <div class='red'>${treds[i][0]} &darr;</div>`;
+            } else {
+              price += `
+              <div class='green'>${treds[i][0]} &uarr;</div>`;
+            }
+            amount += `
+          <div>${treds[i][1]}</div>`;
+            time += `
+            <div class='ml-6'>${moment(treds[i][2])
+              .startOf("seconds")
+              .fromNow()}</div>`;
+            current_price = current_price;
+            newDataset = treds[i][0];
+          } else {
+            if (search >= treds) {
+              var a = search;
+              var amountofAlll = treds[i][1];
+              if (amountofAlll > a) {
+                amount += `
+          <div>${amountofAlll}</div>`;
+              } else if (amount2 == null || amount2 == "") {
+                amount = "No More Results!";
+              }
+            }
+          }
+        }
+        $("#linklist").html(price2);
+        $("#price").html(price);
+        $("#amount").html(amount);
+        $("#amount2").html(amount2);
+        $("#time").html(time);
+        var monay = document.getElementById("price");
+      }
+    };
+  </script>
+</html>

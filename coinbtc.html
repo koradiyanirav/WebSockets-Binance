@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Binance Market Trader</title>
+  </head>
+  <style>
+    th,
+    td {
+      border: 1px solid black;
+      padding: 8px;
+    }
+  </style>
+  <body>
+    <table id="bitcoinTable">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Price</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table rows will be added here -->
+      </tbody>
+    </table>
+
+    <!-- `wss://stream.binance.com:9443/ws/btcusdt@trade` -->
+    <script>
+      const socket = new WebSocket(
+        "wss://stream.binance.com:9443/ws/btcusdt@trade"
+      ); // Replace with your WebSocket URL
+      const tableBody = document.querySelector("#bitcoinTable tbody");
+
+      // Listen for WebSocket messages
+      socket.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data); // Assuming data is an array of objects
+
+        if (Array.isArray(data)) {
+          // Loop through the data array and create rows in the table
+          for (let i = 0; i < Math.min(data.length, 50); i++) {
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td>${data[i].T}</td>
+                <td>${data[i].p}</td>
+                <td>${data[i].q}</td>
+            `;
+            tableBody.appendChild(newRow);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
