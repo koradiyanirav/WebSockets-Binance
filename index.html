@@ -9,6 +9,7 @@
       href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
     <style>
       th,
       td {
@@ -38,12 +39,13 @@
         <input
           type="text"
           id="searchInput"
-          placeholder="Enter your search term"
+          placeholder="Enter Amount"
+          value="0"
           class="outline-none border border-gray-500 p-1 rounded"
         />
-        <button onclick="searchFun()" class="bg-rose-600 p-2 rounded-full">
+        <!-- <button onclick="searchFun()" class="bg-rose-600 p-2 rounded-full">
           Search
-        </button>
+        </button> -->
       </div>
       <div class="h-full">
         <table id="myTable">
@@ -67,7 +69,6 @@
       </form>
     </div>
   </body>
-  <script src="https://momentjs.com/downloads/moment.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
   <script>
@@ -80,12 +81,13 @@
     var tradeTitle = document.getElementById("treding2");
 
     var currentPrice = 0;
-    var traders = [[]];
-    var amountAbove = 0;
+    var traders = [];
     const tableBody = document.getElementById("tableBody");
     const maxRows = 50;
 
     exampleSocket.onmessage = function (event) {
+      var amountAbove = document.getElementById("searchInput").value;
+
       var oriPrice = JSON.parse(event.data);
       // console.log(event.data);
       newrPrice = parseFloat(oriPrice.p).toFixed(2);
@@ -103,59 +105,65 @@
       currentPrice = newrPrice;
 
       var colors = oriPrice.m;
+      console.log(colors);
 
-      var qty = Math.round(oriPrice.q * oriPrice.p);
-
-      var time = moment(oriPrice.T);
-
-      var d = moment.duration(time, "milliseconds");
-
-      var hours = Math.floor(d.asHours());
-
-      var mins = Math.floor(d.asMinutes()) - hours * 60 + " Minutes Ago";
+      var qty = oriPrice.q;
 
       if (qty > amountAbove) {
-        traders.unshift([currentPrice, qty, mins]);
+        document.getElementById("tableBody").innerHTML = "";
+        traders.unshift([newrPrice, qty, oriPrice.T, colors]);
 
-        for (let i = 0; i < traders.length && i < 50; ++i) {
+        if (traders.length >= 50) {
+          traders = traders.slice(0, 50);
+        }
+        for (let i = 0; i < traders.length; ++i) {
           const row = document.createElement("tr");
-          // if (traders[i].length === 50) {
-          // const price = traders[i][0];
-          // console.log(price);
-          for (let j = 0; j < traders[i].length; ++j) {
-            const cell = document.createElement("td");
-            //   traders = traders[i].slice(0, 50);
 
-            cell.textContent = traders[i][j];
-            row.appendChild(cell);
-            // }
-          }
-          // }
-          // tableBody.appendChild(row);
-        }
-      }
-    };
-
-    const searchFun = () => {
-      var filter = document.getElementById("searchInput").value;
-
-      var myTable = document.getElementById("tableBody");
-
-      var tr = myTable.getElementsByTagName("tr");
-
-      console.log(tr);
-      for (let i = 0; i < tr.length; i++) {
-        let td = tr[i].getElementsByTagName("td")[1];
-
-        if (td) {
-          let textValue = td.textContent || td.innerHTML;
-          if (textValue.indexOf(filter) > -1) {
-            tr[i].style.display = "";
+          const cell1 = document.createElement("td");
+          const cell2 = document.createElement("td");
+          const cell3 = document.createElement("td");
+          // console.log(traders[i][j]);
+          if (traders[i][3]) {
+            cell1.style.color = "green";
           } else {
-            tr[i].style.display = "none";
+            cell1.style.color = "red";
           }
+          cell1.textContent = traders[i][0];
+          cell2.textContent = traders[i][1];
+          var time = moment(traders[i][2]).startOf("seconds").fromNow();
+          cell3.textContent = time;
+
+          // console.log(cell.textContent);
+          row.appendChild(cell1);
+          row.appendChild(cell2);
+          row.appendChild(cell3);
+
+          tableBody.appendChild(row);
+          // }
         }
       }
     };
+
+    // const searchFun = () => {
+    //   var filter = document.getElementById("searchInput").value;
+
+    //   var myTable = document.getElementById("tableBody");
+
+    //   var tr = myTable.getElementsByTagName("tr");
+
+    //   console.log(tr);
+    //   for (let i = 0; i < tr.length; i++) {
+    //     let td = tr[i].getElementsByTagName("td")[1];
+
+    //     if (td) {
+    //       let textValue = td.textContent || td.innerHTML;
+    //       if (textValue.indexOf(filter) > -1) {
+    //         tr[i].style.display = "";
+    //       } else {
+    //         tr[i].style.display = "none";
+    //       }
+    //     }
+    //   }
+    // };
   </script>
 </html>

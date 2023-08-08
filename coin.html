@@ -1,99 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Bitcoin Data Table</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bitcoin Price Tracker</title>
   </head>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    table {
-      width: 80%;
-      margin: 0 auto;
-      border-collapse: collapse;
-    }
-
     th,
     td {
-      border: 1px solid #ccc;
+      border: 1px solid black;
       padding: 8px;
-    }
-
-    th {
-      background-color: #f2f2f2;
     }
   </style>
   <body>
-    <h1>Bitcoin Data Table</h1>
     <table>
       <thead>
         <tr>
+          <th>Timestamp</th>
           <th>Price</th>
-          <th>Amount</th>
-          <th>Time</th>
         </tr>
       </thead>
-      <tbody id="tableBody"></tbody>
+      <tbody id="priceTableBody">
+        <!-- Table rows will be added dynamically -->
+      </tbody>
     </table>
 
     <script>
-      const tableBody = document.getElementById("tableBody");
+      // Establish WebSocket connection
+      const socket = new WebSocket(
+        "wss://stream.binance.com:9443/ws/btcusdt@trade"
+      );
 
-      // Simulated array of data (replace with real data)
-      const dataArray = [
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        [10000, 0.05, "10:00 AM"],
-        [10500, 0.03, "11:30 AM"],
-        [9800, 0.08, "12:45 PM"],
-        // ... add more data entries here
-      ];
+      // Get table body reference
+      const priceTableBody = document.getElementById("priceTableBody");
 
-      for (let i = 0; i < dataArray.length && i < 10; i++) {
-        const row = document.createElement("tr");
+      // Function to update table and cell color
+      function updateTable(timestamp, price) {
+        const newRow = document.createElement("tr");
+        const timestampCell = document.createElement("td");
+        const priceCell = document.createElement("td");
 
-        for (let j = 0; j < dataArray[i].length; j++) {
-          const cell = document.createElement("td");
-          cell.textContent = dataArray[i][j];
-          row.appendChild(cell);
+        timestampCell.textContent = timestamp;
+        priceCell.textContent = price;
+
+        // newRow.appendChild(timestampCell);
+        // newRow.appendChild(priceCell);
+
+        // Check price change and apply color
+        if (priceTableBody.firstChild.lastChild > priceCell.previousPrice) {
+          priceCell.style.color = "green";
+        } else if (
+          priceTableBody.firstChild.lastChild < priceCell.previousPrice
+        ) {
+          priceCell.style.color = "red";
         }
 
-        tableBody.appendChild(row);
+        priceCell.previousPrice = price; // Store current price for next comparison
+
+        // Add row to table
+        priceTableBody.insertBefore(newRow, priceTableBody.firstChild);
       }
+
+      // WebSocket event handler
+      socket.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+        const timestamp = (seconds =
+          Math.floor((data.T / 1000) % 60) + " Seconds ago");
+        const price = parseFloat(data.p).toFixed(2);
+
+        updateTable(timestamp, price);
+      });
     </script>
   </body>
 </html>

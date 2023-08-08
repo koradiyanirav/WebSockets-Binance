@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="css.css" />
+    <title>main</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://momentjs.com/downloads/moment.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
@@ -76,7 +75,7 @@
 
     websocket.onmessage = function (event) {
       var newok = JSON.parse(event.data);
-      console.log(newok);
+      // console.log(newok);
       glocbe = newok.m;
 
       var dataLoad = parseFloat(newok.p).toFixed(2);
