@@ -3,135 +3,153 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title id="treding2"></title>
+    <title id="treding2">BinancePlex</title>
+    <link rel="shortcut icon" href="/assets/btc.png" type="image/x-icon" />
     <link
       rel="stylesheet"
       href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://momentjs.com/downloads/moment.js"></script>
-    <style>
-      th,
-      td {
-        border: 1px solid black;
-        padding: 8px;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
-    <div class="m-3">
-      <div class="border border-black w-1/4 mb-2 p-2">
-        <h1 class="text-[32px] font-extrabold my-[21.44px]">Traders</h1>
-        <div class="text-[25px] font-extrabold flex gap-1 items-center">
-          <img
-            src="assets/btc.png"
-            alt="BitCoinLogo"
-            class="h-[25px] w-[25px]"
-          />BitCoin Price
-          <span class="text-gray-500 font-normal text-[20px]">(BTC)</span>
+  <body
+    class="bg-[#161a1e] text-[#b7bdc6] font-[BinancePlex,Arial,sans-serif!important]"
+  >
+    <div class="m-3 flex justify-between w-[1200px]">
+      <div>
+        <div class="w-full mb-2 p-2">
+          <h1 class="text-[32px] font-extrabold my-[21.44px]">Traders</h1>
+          <div class="text-[25px] font-extrabold flex gap-1 items-center">
+            <img
+              src="assets/btc.png"
+              alt="BitCoinLogo"
+              class="h-[25px] w-[25px]"
+            />BitCoin Price
+            <span class="text-gray-500 font-normal text-[20px]">(BTC)</span>
+          </div>
+          <div
+            id="treding"
+            class="p-5 w-full flex font-semibold gap-[5px] text-[16px]"
+          ></div>
         </div>
+        <div class="w-[350px] pb-4 px-4">
+          <div
+            class="mb-2 flex gap-2 rounded leading-normal bg-[#2b3139] w-full h-6"
+          >
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Enter Amount"
+              value="0"
+              class="outline-none border-none pl-4 w-full text-[12px] bg-transparent text-[#eaecef] placeholder:text-[#5e6673]"
+            />
+          </div>
+          <div class="flex">
+            <a
+              href="/"
+              class="text-[#f0b90b] font-medium text-[14px] py-2 px-[1px] mr-5"
+            >
+              Market Trades
+            </a>
+            <div class="text-[#848e9c] text-[14px] py-2 px-[1px] mr-5">
+              My Trades
+            </div>
+          </div>
+          <table class="text-xs font-normal">
+            <thead>
+              <th class="text-[#848e9c] text-left font-semibold h-4 pb-2">
+                Price (USDT)
+              </th>
+              <th
+                class="text-[#848e9c] text-right w-[100px] font-semibold h-4 pb-2"
+              >
+                Amount (BTC)
+              </th>
+              <th
+                class="text-[#848e9c] text-right w-[96px] pr-4 font-semibold h-4 pb-2"
+              >
+                Time
+              </th>
+            </thead>
+          </table>
+          <div class="h-[280px] overflow-y-scroll overflow-x-hidden pb-2">
+            <table id="myTable" class="w-full text-xs font-normal">
+              <thead>
+                <tr class="px-4 py-2 hidden">
+                  <th class="text-[#848e9c] text-left font-semibold h-4 pb-2">
+                    Price (USDT)
+                  </th>
+                  <th class="text-[#848e9c] text-right font-semibold h-4 pb-2">
+                    Amount (BTC)
+                  </th>
+                  <th
+                    class="text-[#848e9c] text-right pr-4 font-semibold h-4 pb-2"
+                  >
+                    Time
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="tableBody" class=""></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="mt-[275px]">
         <div
-          id="treding"
-          class="p-5 w-1/5 flex font-semibold gap-[5px] text-[16px]"
-        ></div>
+          id="output"
+          class="w-[575px] h-[300px] overflow-x-hidden overflow-y-scroll flex gap-5"
+        >
+          <table id="inputTable" class="text-xs font-normal">
+            <thead>
+              <tr>
+                <th
+                  class="text-[#848e9c] text-left font-semibold h-4 pb-2 pr-2"
+                >
+                  Price(USDT)
+                </th>
+                <th
+                  class="text-[#848e9c] text-right font-semibold h-4 pb-2 pl-2"
+                >
+                  Size(BTC)
+                </th>
+                <th
+                  class="text-[#848e9c] text-right font-semibold h-4 pb-2 pl-2"
+                >
+                  Sum(BTC)
+                </th>
+              </tr>
+            </thead>
+            <tbody id="tabBody"></tbody>
+          </table>
+          <table id="bitTable" class="text-xs font-normal mr-2">
+            <thead>
+              <tr>
+                <th
+                  class="text-[#848e9c] text-left font-semibold h-4 pb-2 pr-2"
+                >
+                  Price(USDT)
+                </th>
+                <th
+                  class="text-[#848e9c] text-right font-semibold h-4 pb-2 pl-2"
+                >
+                  Size(BTC)
+                </th>
+                <th
+                  class="text-[#848e9c] text-right font-semibold h-4 pb-2 pl-2"
+                >
+                  Sum(BTC)
+                </th>
+              </tr>
+            </thead>
+            <tbody id="bitBody"></tbody>
+          </table>
+          <div id="output"></div>
+        </div>
       </div>
-      <div class="mb-2 p-2 flex gap-2">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Enter Amount"
-          value="0"
-          class="outline-none border border-gray-500 p-1 rounded"
-        />
-      </div>
-      <div class="h-full">
-        <table id="myTable">
-          <thead>
-            <tr>
-              <th class="">Price (USDT)</th>
-              <th class="">Amount (BTC)</th>
-              <th class="">Time</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
-      <form>
-        <input type="text" />
-      </form>
     </div>
   </body>
   <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-  <script>
-    var exampleSocket = new WebSocket(
-      "wss://stream.binance.com:9443/ws/btcusdt@trade"
-    );
-
-    var tradeDiv = document.getElementById("treding");
-
-    var tradeTitle = document.getElementById("treding2");
-
-    var currentPrice = 0;
-    var traders = [];
-    const tableBody = document.getElementById("tableBody");
-    const maxRows = 50;
-
-    exampleSocket.onmessage = function (event) {
-      var amountAbove = document.getElementById("searchInput").value;
-
-      var oriPrice = JSON.parse(event.data);
-      newrPrice = parseFloat(oriPrice.p).toFixed(2);
-
-      tradeDiv.innerHTML = `<div class='text-black'>$</div>${newrPrice}`;
-
-      tradeTitle.innerHTML = newrPrice;
-
-      if (newrPrice > currentPrice) {
-        document.getElementById("treding").style.color = "green";
-      } else if (newrPrice < currentPrice) {
-        document.getElementById("treding").style.color = "red";
-      }
-
-      currentPrice = newrPrice;
-
-      var colors = oriPrice.m;
-
-      var qty = oriPrice.q;
-
-      if (qty > amountAbove) {
-        document.getElementById("tableBody").innerHTML = "";
-
-        traders.unshift([newrPrice, qty, oriPrice.T, colors]);
-
-        if (traders.length >= 50) {
-          traders = traders.slice(0, 50);
-        }
-
-        for (let i = 0; i < traders.length; ++i) {
-          const row = document.createElement("tr");
-          const cell1 = document.createElement("td");
-          const cell2 = document.createElement("td");
-          const cell3 = document.createElement("td");
-
-          if (traders[i][3]) {
-            cell1.style.color = "green";
-          } else {
-            cell1.style.color = "red";
-          }
-
-          cell1.textContent = traders[i][0];
-          cell2.textContent = traders[i][1];
-          var time = moment(traders[i][2]).startOf("seconds").fromNow();
-          cell3.textContent = time;
-
-          row.appendChild(cell1);
-          row.appendChild(cell2);
-          row.appendChild(cell3);
-
-          tableBody.appendChild(row);
-        }
-      }
-    };
-  </script>
+  <script src="script.js"></script>
 </html>

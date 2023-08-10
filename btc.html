@@ -1,109 +1,73 @@
-<!DOCTYPE html>
-<html>
+<!-- <!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>BTC</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>parseFloat in For Loop Example</title>
   </head>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px auto;
-    }
-
-    th,
-    td {
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-
-    thead {
-      background-color: #f2f2f2;
-    }
-
-    tbody tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-  </style>
   <body>
-    <h1>Bitcoin Price & Amount Table</h1>
+    <div id="output"></div>
 
-    <div class="mb-2 p-2 flex gap-2">
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Enter Amount"
-        value="0"
-        class="outline-none border border-gray-500 p-1 rounded"
-      />
-    </div>
+    <script>
+      const stringNumbers = ["1", "2", "3", "4", "5", "6"];
 
-    <table id="">
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Price</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
+      let sum = 0;
+      const outputDiv = document.getElementById("output");
+
+      for (let i = 0; i < stringNumbers.length; i++) {
+        const row = document.createElement("tr");
+        const price = document.createElement("td");
+        sum += parseFloat(stringNumbers[i]);
+        price.textContent = sum;
+        row.appendChild(price);
+        outputDiv.appendChild(row);
+      }
+    </script>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reverse TD Elements Example</title>
+  </head>
+  <body>
+    <table id="myTable">
+      <tr>
+        <td>Cell 1</td>
+        <td>Cell 2</td>
+        <td>Cell 3</td>
+        <td>Cell 4</td>
+      </tr>
     </table>
 
     <script>
-      var exampleSocket = new WebSocket(
-        "wss://stream.binance.com:9443/ws/btcusdt@trade"
-      );
+      // Get the table element
+      const table = document.getElementById("myTable");
 
-      exampleSocket.onmessage = function (event) {
-        var amountAbove = document.getElementById("searchInput").value;
+      // Get the rows of the table
+      const rows = table.getElementsByTagName("tr");
 
-        var data = JSON.parse(event.data);
+      // Loop through the rows in reverse order
+      for (let i = rows.length - 1; i >= 0; i--) {
+        const row = rows[i];
 
-        const { T, p, q } = data;
-        addToTable(T, p, q);
-        // console.log(T, p, q);
+        // Get the cells (td elements) in the row
+        const cells = row.getElementsByTagName("td");
 
-        // var currentPrice = 0;
-        // var amountAbove = 0;
+        // Loop through the cells in reverse order
+        for (let j = cells.length - 1; j >= 0; j--) {
+          const cell = cells[j];
 
-        function addToTable(T, p, q) {
-          newrPrice = parseFloat(p).toFixed(2);
-
-          // var qty = q;
-
-          // console.log(qty);
-
-          const tableBody = document.getElementById("tableBody");
-          const newRow = tableBody.insertRow(0);
-
-          // if (qty > amountAbove) {
-          //   if (newrPrice >= 50) {
-          //     traders = traders.slice(0, 50);
-          //   }
-          const timeCell = document.createElement("td");
-          timeCell.textContent = seconds =
-            Math.floor((T / 1000) % 60) + " Seconds ago";
-          newRow.appendChild(timeCell);
-
-          const priceCell = document.createElement("td");
-          priceCell.textContent = newrPrice;
-          newRow.appendChild(priceCell);
-
-          const amountCell = document.createElement("td");
-          amountCell.textContent = q;
-          newRow.appendChild(amountCell);
-          // }
-          tableBody.appendChild(newRow);
+          // Append the cell back to the row
+          row.appendChild(cell);
         }
-      };
+
+        // Append the row back to the table
+        table.appendChild(row);
+      }
     </script>
   </body>
 </html>
