@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title id="treding2">BinancePlex</title>
+    <title id="treding2">Binance</title>
     <link rel="shortcut icon" href="/assets/btc.png" type="image/x-icon" />
     <link
       rel="stylesheet"
@@ -11,6 +11,7 @@
     />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body
@@ -30,7 +31,7 @@
           </div>
           <div
             id="treding"
-            class="p-5 w-full flex font-semibold gap-[5px] text-[16px]"
+            class="p-5 w-full flex font-semibold gap-[5px] text-[16px] items-center"
           ></div>
         </div>
         <div class="w-[350px] pb-4 px-4">
@@ -96,32 +97,7 @@
         </div>
       </div>
       <div class="mt-[275px]">
-        <div
-          id="output"
-          class="w-[575px] h-[300px] overflow-x-hidden overflow-y-scroll flex gap-5"
-        >
-          <table id="inputTable" class="text-xs font-normal">
-            <thead>
-              <tr>
-                <th
-                  class="text-[#848e9c] text-left font-semibold h-4 pb-2 pr-2"
-                >
-                  Price(USDT)
-                </th>
-                <th
-                  class="text-[#848e9c] text-right font-semibold h-4 pb-2 pl-2"
-                >
-                  Size(BTC)
-                </th>
-                <th
-                  class="text-[#848e9c] text-right font-semibold h-4 pb-2 pl-2"
-                >
-                  Sum(BTC)
-                </th>
-              </tr>
-            </thead>
-            <tbody id="tabBody"></tbody>
-          </table>
+        <div id="output" class="flex flex-col gap-5">
           <table id="bitTable" class="text-xs font-normal mr-2">
             <thead>
               <tr>
@@ -144,9 +120,36 @@
             </thead>
             <tbody id="bitBody"></tbody>
           </table>
-          <div id="output"></div>
+          <table id="inputTable" class="text-xs font-normal">
+            <thead>
+              <tr>
+                <th
+                  class="text-[#848e9c] text-left font-semibold h-4 pb-2 pr-2"
+                >
+                  Price(USDT)
+                </th>
+                <th
+                  class="text-[#848e9c] text-right font-semibold h-4 pb-2 pl-2"
+                >
+                  Size(BTC)
+                </th>
+                <th
+                  class="text-[#848e9c] text-right font-semibold h-4 pb-2 pl-2"
+                >
+                  Sum(BTC)
+                </th>
+              </tr>
+            </thead>
+            <tbody id="tabBody"></tbody>
+          </table>
         </div>
       </div>
+    </div>
+    <div class="flex items-center justify-center w-full">
+      <div id="chart" class="w-3/4 h-[600px] m-14"></div>
+    </div>
+    <div class="flex items-center justify-center w-full">
+      <div id="chart" class="w-3/4 h-[600px] m-14"></div>
     </div>
   </body>
   <script src="https://code.jquery.com/jquery-3.7.0.js"></script>

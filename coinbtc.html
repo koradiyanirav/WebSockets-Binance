@@ -3,53 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CoinBtc</title>
+    <title>Binance Kline Data with Lightweight Charts</title>
+    <script src="https://unpkg.com/lightweight-charts@3.0.0/dist/lightweight-charts.standalone.production.js"></script>
   </head>
-  <style>
-    th,
-    td {
-      border: 1px solid black;
-      padding: 8px;
-    }
-  </style>
   <body>
-    <table id="bitcoinTable">
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Price</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Table rows will be added here -->
-      </tbody>
-    </table>
+    <div id="chart-container" style="width: 100%; height: 400px"></div>
 
-    <!-- `wss://stream.binance.com:9443/ws/btcusdt@trade` -->
     <script>
-      const socket = new WebSocket(
-        "wss://stream.binance.com:9443/ws/btcusdt@trade"
-      ); // Replace with your WebSocket URL
-      const tableBody = document.querySelector("#bitcoinTable tbody");
+      const binanceSymbol = "btcusdt"; // Change to the desired trading pair
+      const binanceInterval = "1h"; // Change to the desired time interval
 
-      // Listen for WebSocket messages
-      socket.addEventListener("message", (event) => {
-        const data = JSON.parse(event.data); // Assuming data is an array of objects
-
-        if (Array.isArray(data)) {
-          // Loop through the data array and create rows in the table
-          for (let i = 0; i < Math.min(data.length, 50); i++) {
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                <td>${data[i].T}</td>
-                <td>${data[i].p}</td>
-                <td>${data[i].q}</td>
-            `;
-          }
-          tableBody.appendChild(newRow);
-        }
+      const chartContainer = document.getElementById("chart-container");
+      const chart = LightweightCharts.createChart(chartContainer, {
+        width: chartContainer.offsetWidth,
+        height: chartContainer.offsetHeight,
       });
+
+      // Fetch kline data from Binance API
+      fetch(
+        `https://fapi.binance.com/fapi/v1/klines?symbol=${binanceSymbol}&interval=${binanceInterval}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          const ohlc = data.map((item) => ({
+            time: item[0] / 1000, // Convert timestamp to seconds
+            open: parseFloat(item[1]),
+            high: parseFloat(item[2]),
+            low: parseFloat(item[3]),
+            close: parseFloat(item[4]),
+          }));
+
+          const candleSeries = chart.addCandlestickSeries();
+          candleSeries.setData(ohlc);
+        })
+        .catch((error) => console.error("Error fetching data:", error));
     </script>
   </body>
 </html>

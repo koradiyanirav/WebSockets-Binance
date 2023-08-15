@@ -1,73 +1,103 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>parseFloat in For Loop Example</title>
-  </head>
-  <body>
-    <div id="output"></div>
-
-    <script>
-      const stringNumbers = ["1", "2", "3", "4", "5", "6"];
-
-      let sum = 0;
-      const outputDiv = document.getElementById("output");
-
-      for (let i = 0; i < stringNumbers.length; i++) {
-        const row = document.createElement("tr");
-        const price = document.createElement("td");
-        sum += parseFloat(stringNumbers[i]);
-        price.textContent = sum;
-        row.appendChild(price);
-        outputDiv.appendChild(row);
-      }
-    </script>
-  </body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reverse TD Elements Example</title>
+    <title>Binance Kline Data with Lightweight Charts</title>
   </head>
   <body>
-    <table id="myTable">
-      <tr>
-        <td>Cell 1</td>
-        <td>Cell 2</td>
-        <td>Cell 3</td>
-        <td>Cell 4</td>
-      </tr>
-    </table>
+    <h1>Binance Kline Data with Lightweight Charts</h1>
+    <div id="chart-container"></div>
 
+    <script src="https://unpkg.com/lightweight-charts@3.0.0/dist/lightweight-charts.standalone.production.js"></script>
     <script>
-      // Get the table element
-      const table = document.getElementById("myTable");
+      // Import the Lightweight Charts library
+      const { createChart } = LightweightCharts;
 
-      // Get the rows of the table
-      const rows = table.getElementsByTagName("tr");
+      // Initialize the chart container
+      const chartContainer = document.getElementById("chart-container");
 
-      // Loop through the rows in reverse order
-      for (let i = rows.length - 1; i >= 0; i--) {
-        const row = rows[i];
+      // Create the chart
+      const chart = createChart(chartContainer, {
+        width: 600,
+        height: 300,
+        layout: {
+          background: {
+            type: "solid",
+            color: "#000000",
+          },
+          textColor: "rgba(255, 255, 255, 0.9)",
+        },
+        grid: {
+          vertLines: {
+            color: "rgba(197, 203, 206, 0.5)",
+          },
+          horzLines: {
+            color: "rgba(197, 203, 206, 0.5)",
+          },
+        },
+        crosshair: {
+          mode: LightweightCharts.CrosshairMode.Normal,
+        },
+        rightPriceScale: {
+          borderColor: "rgba(197, 203, 206, 0.8)",
+        },
+        timeScale: {
+          borderColor: "rgba(197, 203, 206, 0.8)",
+        },
+      });
 
-        // Get the cells (td elements) in the row
-        const cells = row.getElementsByTagName("td");
+      var candleSeries = chart.addCandlestickSeries({
+        upColor: "rgba(255, 144, 0, 1)",
+        downColor: "#000",
+        borderDownColor: "rgba(255, 144, 0, 1)",
+        borderUpColor: "rgba(255, 144, 0, 1)",
+        wickDownColor: "rgba(255, 144, 0, 1)",
+        wickUpColor: "rgba(255, 144, 0, 1)",
+      });
 
-        // Loop through the cells in reverse order
-        for (let j = cells.length - 1; j >= 0; j--) {
-          const cell = cells[j];
+      // Initialize the series for candlestick data
+      const candlestickSeries = chart.addCandlestickSeries();
 
-          // Append the cell back to the row
-          row.appendChild(cell);
-        }
+      // Binance WebSocket URL for Kline data
+      const binanceWebSocketUrl =
+        "wss://stream.binance.com:9443/ws/btcusdt@kline_15m";
 
-        // Append the row back to the table
-        table.appendChild(row);
-      }
+      // Create a WebSocket connection
+      const ws = new WebSocket(binanceWebSocketUrl);
+
+      // Handle WebSocket open event
+      ws.addEventListener("open", () => {
+        console.log("WebSocket connection opened.");
+      });
+
+      // Handle WebSocket message event
+      ws.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+
+        console.log(data);
+        // Extract Kline data
+        const klineData = data.k;
+
+        // Update the candlestick series
+        candlestickSeries.update({
+          time: klineData.t / 1000,
+          open: parseFloat(klineData.o),
+          high: parseFloat(klineData.h),
+          low: parseFloat(klineData.l),
+          close: parseFloat(klineData.c),
+        });
+      });
+
+      // Handle WebSocket close event
+      ws.addEventListener("close", () => {
+        console.log("WebSocket connection closed.");
+      });
+
+      // Handle WebSocket error event
+      ws.addEventListener("error", (error) => {
+        console.error("WebSocket error:", error);
+      });
     </script>
   </body>
 </html>
