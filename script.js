@@ -3,6 +3,7 @@ var exampleSocket = new WebSocket(
 );
 
 var tradeDiv = document.getElementById("treding");
+var tradeTitle = document.getElementById("treding2");
 
 var currentPrice = 0;
 var traders = [];
@@ -16,6 +17,7 @@ exampleSocket.onmessage = function (event) {
   newrPrice = parseFloat(oriPrice.p).toFixed(2);
 
   tradeDiv.innerHTML = `<div class='text-[#848e9c]'>$ </div>${newrPrice}`;
+  tradeTitle.innerHTML = `${newrPrice} Binance Traders`;
 
   if (newrPrice > currentPrice) {
     document.getElementById("treding").style.color = "#0ecb81";
